@@ -8,7 +8,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 var todoList = [{
     id: 1,
     todo: "Implement a REST API"
-}, { id: 12, todo: "Implemented" }];
+}];
 
 
 // GET /api/todos
@@ -38,16 +38,36 @@ app.post('/api/todos', function(req, res, next) {
 
         let toDoObj = {
             id: nextId,
-            todo: newBody.todo
+            todo: req.body.todo
         }
         todoList.push(toDoObj)
 
         res.send(toDoObj)
 
-    })
-    // PUT /api/todos/:id
+})
+
+// PUT /api/todos/:id
+app.put('/api/todos/:id', function(req, res, next) {
+    let id = parseInt(req.params.id);
+    let foundEntry = todoList.find(function(item) {
+        return item.id === id;
+    });
+    console.log(req.body);
+    foundEntry.todo = req.body.todo;
+    res.send(foundEntry);
+})
 
 // DELETE /api/todos/:id
+app.delete('/api/todos/:id', function(req, res, next) {
+    let id = parseInt(req.params.id);
+    let foundIndex = todoList.findIndex(function(element) {
+        return element.id === id;
+    })
+    if(foundIndex) {
+        let deletedItem = todoList.splice(foundIndex, 1);
+        res.send(`Deleted list item: ${JSON.stringify(deletedItem[0])}`);
+    }
+})
 
 app.listen(3000, function() {
     console.log('Todo List API is now listening on port 3000...');
